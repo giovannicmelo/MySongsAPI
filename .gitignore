@@ -286,3 +286,5 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+git update-index --assume-unchanged path_to_file/web.config
