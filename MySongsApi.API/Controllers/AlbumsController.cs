@@ -19,6 +19,13 @@ namespace MySongsApi.API.Controllers
         private IRepository<Album> _repository
              = new AlbumsRepository(new MySongsDbContext());
 
+        /// <summary>
+        /// Get a list of Albums
+        /// </summary>
+        /// <remarks>Return a list of Albums</remarks>
+        /// <response code="404">Not Found</response>
+        /// <response code="200">Ok</response>
+        /// <returns>List of Albums</returns>
         public override IHttpActionResult Get()
         {
             IEnumerable<Album> albums = _repository.Select();
@@ -31,6 +38,15 @@ namespace MySongsApi.API.Controllers
             return Ok(dtos);
         }
 
+        /// <summary>
+        /// Get an Album by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <remarks>Return an Album</remarks>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="200">Ok</response>
+        /// <returns>An Album</returns>
         public override IHttpActionResult Get(int? id)
         {
             if (!id.HasValue)
@@ -47,6 +63,14 @@ namespace MySongsApi.API.Controllers
             return Content(HttpStatusCode.OK, dto);
         }
 
+        /// <summary>
+        /// Add a new Album
+        /// </summary>
+        /// <param name="dto">Album DTO</param>
+        /// <remarks>Insert a new Album</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="201">Created</response>
+        /// <returns>Album added</returns>
         [ApplyModelValidation]
         public IHttpActionResult Post([FromBody] AlbumDTO dto)
         {
@@ -65,6 +89,15 @@ namespace MySongsApi.API.Controllers
 
         }
 
+        /// <summary>
+        /// Modify an existing Album
+        /// </summary>
+        /// <remarks>Update an Album</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="200">Ok</response>
+        /// <param name="id">Album Id</param>
+        /// <param name="dto">Album Model</param>
+        /// <returns></returns>
         [ApplyModelValidation]
         public IHttpActionResult Put(int? id, [FromBody] AlbumDTO dto)
         {
@@ -87,6 +120,16 @@ namespace MySongsApi.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove an Album
+        /// </summary>
+        /// <remarks>Delete an Album</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="200">Ok</response>
+        /// <param name="id">Album Id</param>
+        /// <returns></returns>
         public override IHttpActionResult Delete(int? id)
         {
             try
@@ -110,6 +153,14 @@ namespace MySongsApi.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a list of Albums by Band
+        /// </summary>
+        /// <remarks>Return a list of Albums by Band</remarks>
+        /// <response code="404">Not Found</response>
+        /// <response code="200">Ok</response>
+        /// <param name="bandName">Band name</param>
+        /// <returns>List of band albums</returns>
         [Route("band/{bandName}")]
         public IHttpActionResult Get(string bandName)
         {

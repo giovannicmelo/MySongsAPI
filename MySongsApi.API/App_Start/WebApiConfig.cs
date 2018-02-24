@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Serialization;
+using Swashbuckle.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,14 @@ namespace MySongsApi.API.App_Start
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            // Swagger Initial Page Route
+            config.Routes.MapHttpRoute(
+                name: "swagger_root",
+                routeTemplate: "",
+                defaults: null,
+                constraints: null,
+                handler: new RedirectHandler((message => message.RequestUri.ToString()), "swagger"));
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
