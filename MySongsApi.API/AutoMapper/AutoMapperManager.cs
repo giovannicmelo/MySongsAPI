@@ -2,9 +2,6 @@
 using MySongsApi.API.DTO;
 using MySongsApi.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MySongsApi.API.AutoMapper
 {
@@ -28,10 +25,16 @@ namespace MySongsApi.API.AutoMapper
         {
             _config = new MapperConfiguration((cfg) =>
             {
-                cfg.CreateMap<Album, AlbumDTO>();
+                cfg.CreateMap<Album, AlbumDTO>().ForMember(p => p.Band, opt =>
+                {
+                    opt.MapFrom(src => src.Band.Name);
+                });
                 cfg.CreateMap<AlbumDTO, Album>();
 
-                cfg.CreateMap<Song, SongDTO>();
+                cfg.CreateMap<Song, SongDTO>().ForMember(p => p.Album, opt =>
+                {
+                    opt.MapFrom(src => src.Album.Name);
+                });
                 cfg.CreateMap<SongDTO, Song>();
 
                 cfg.CreateMap<Band, BandDTO>();

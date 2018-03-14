@@ -4,6 +4,7 @@ using MySongsApi.Domain.Models;
 using MySongsApi.Infrastructure.Context;
 using MySongsApi.Repositories.Impl;
 using MySongsApi.Repositories.Interfaces;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,28 @@ using System.Web.Http.Cors;
 namespace MySongsApi.API.Controllers
 {
     //[EnableCors(origins: "*", headers: "*", methods: "*")]
+    /// <summary>
+    /// Band's API
+    /// </summary>
     [RoutePrefix("api/bands")]
     public class BandsController : BaseApiController
     {
-        private IRepository<Band> _repository
-            = new BandsRepository(new MySongsDbContext());
+        private readonly IBandRepository _repository;
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public BandsController() : base()
+        {
+            _repository = _kernel.Get<IBandRepository>();
+        }
 
+        /// <summary>
+        /// Get a list of Bands
+        /// </summary>
+        /// <remarks>Return a list of Bands</remarks>
+        /// <response code="404">Not Found</response>
+        /// <response code="200">Ok</response>
+        /// <returns>List of Bands</returns>
         public override IHttpActionResult Get()
         {
             IEnumerable<Band> bands = _repository.Select();
@@ -33,10 +50,19 @@ namespace MySongsApi.API.Controllers
             return Ok(dtos);
         }
 
+        /// <summary>
+        /// Get an Band by Id
+        /// </summary>
+        /// <param name="id">Band Id</param>
+        /// <remarks>Return an Band</remarks>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="200">Ok</response>
+        /// <returns>Band object</returns>
         public override IHttpActionResult Get(int? id)
         {
             if (!id.HasValue)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, new { message = "Invalid parameter.", status = HttpStatusCode.BadRequest });
 
             Band band = _repository.SelectById(id.Value);
 
@@ -48,6 +74,14 @@ namespace MySongsApi.API.Controllers
             return Content(HttpStatusCode.OK, dto);
         }
 
+        /// <summary>
+        /// Add a new Band
+        /// </summary>
+        /// <param name="dto">Band DTO</param>
+        /// <remarks>Insert a new Band</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="201">Created</response>
+        /// <returns>Band added</returns>
         [ApplyModelValidation]
         public IHttpActionResult Post([FromBody] BandDTO dto)
         {
@@ -66,13 +100,23 @@ namespace MySongsApi.API.Controllers
 
         }
 
+        /// <summary>
+        /// Modify a existing Band
+        /// </summary>
+        /// <remarks>Update a Band</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="200">Ok</response>
+        /// <param name="id">Band Id</param>
+        /// <param name="dto">Band DTO</param>
+        /// <returns>Status of operation</returns>
         [ApplyModelValidation]
         public IHttpActionResult Put(int? id, [FromBody] BandDTO dto)
         {
             try
             {
                 if (!id.HasValue)
-                    return Content(HttpStatusCode.NotFound, new { message = "The response didn't return any data.", status = HttpStatusCode.NotFound });
+                    return Content(HttpStatusCode.BadRequest, new { message = "The response didn't return any data.", status = HttpStatusCode.BadRequest });
 
                 Band band = _autoMapper.Map<BandDTO, Band>(dto);
 
@@ -80,7 +124,7 @@ namespace MySongsApi.API.Controllers
 
                 _repository.Update(band);
 
-                return Ok();
+                return Content(HttpStatusCode.OK, new { message = "The item was successfully updated.", status = HttpStatusCode.OK });
             }
             catch (Exception e)
             {
@@ -88,6 +132,16 @@ namespace MySongsApi.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Remove a Band
+        /// </summary>
+        /// <remarks>Delete a Band</remarks>
+        /// <response code="500">Internal Server Error</response>
+        /// <response code="404">Not Found</response>
+        /// <response code="400">Bad Request</response>
+        /// <response code="200">Ok</response>
+        /// <param name="id">Band Id</param>
+        /// <returns>Status of operation</returns>
         public override IHttpActionResult Delete(int? id)
         {
             try
@@ -102,7 +156,7 @@ namespace MySongsApi.API.Controllers
 
                 _repository.DeleteById(id.Value);
 
-                return Ok();
+                return Content(HttpStatusCode.OK, new { message = "The item was successfully removed.", status = HttpStatusCode.OK });
             }
             catch (Exception e)
             {

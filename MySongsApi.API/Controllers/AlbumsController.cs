@@ -1,9 +1,9 @@
 ﻿using MySongsApi.API.DTO;
 using MySongsApi.API.Filters;
 using MySongsApi.Domain.Models;
-using MySongsApi.Infrastructure.Context;
 using MySongsApi.Repositories.Impl;
 using MySongsApi.Repositories.Interfaces;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +13,21 @@ using System.Web.Http;
 
 namespace MySongsApi.API.Controllers
 {
+    /// <summary>
+    /// Album's API
+    /// </summary>
     [RoutePrefix("api/albums")]
     public class AlbumsController : BaseApiController
     {
-        private IRepository<Album> _repository
-             = new AlbumsRepository(new MySongsDbContext());
+        private readonly IAlbumRepository _repository;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public AlbumsController()
+        {
+            _repository = _kernel.Get<IAlbumRepository>();
+        }
 
         /// <summary>
         /// Get a list of Albums
@@ -41,22 +51,21 @@ namespace MySongsApi.API.Controllers
         /// <summary>
         /// Get an Album by Id
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Album Id</param>
         /// <remarks>Return an Album</remarks>
         /// <response code="404">Not Found</response>
         /// <response code="400">Bad Request</response>
         /// <response code="200">Ok</response>
-        /// <returns>An Album</returns>
+        /// <returns>Album object</returns>
         public override IHttpActionResult Get(int? id)
         {
             if (!id.HasValue)
-                return BadRequest();
+                return Content(HttpStatusCode.BadRequest, new { message = "Invalid parameter.", status = HttpStatusCode.BadRequest });
 
             Album album = _repository.SelectById(id.Value);
 
             if (album == null)
                 return Content(HttpStatusCode.NotFound, new { message = "The response didn't return any data.", status = HttpStatusCode.NotFound });
-                 //return NotFound();
 
             AlbumDTO dto = _autoMapper.Map<Album, AlbumDTO>(album);
 
@@ -94,17 +103,18 @@ namespace MySongsApi.API.Controllers
         /// </summary>
         /// <remarks>Update an Album</remarks>
         /// <response code="500">Internal Server Error</response>
+        /// <response code="400">Bad Request</response>
         /// <response code="200">Ok</response>
         /// <param name="id">Album Id</param>
-        /// <param name="dto">Album Model</param>
-        /// <returns></returns>
+        /// <param name="dto">Album DTO</param>
+        /// <returns>Status of operation</returns>
         [ApplyModelValidation]
         public IHttpActionResult Put(int? id, [FromBody] AlbumDTO dto)
         {
             try
             {
                 if (!id.HasValue)
-                    return BadRequest();
+                    return Content(HttpStatusCode.BadRequest, new { message = "Invalid parameter.", status = HttpStatusCode.BadRequest });
 
                 Album album = _autoMapper.Map<AlbumDTO, Album>(dto);
 
@@ -112,7 +122,7 @@ namespace MySongsApi.API.Controllers
 
                 _repository.Update(album);
 
-                return Ok();
+                return Content(HttpStatusCode.OK, new { message = "The item was successfully updated.", status = HttpStatusCode.OK });
             }
             catch (Exception e)
             {
@@ -129,23 +139,22 @@ namespace MySongsApi.API.Controllers
         /// <response code="400">Bad Request</response>
         /// <response code="200">Ok</response>
         /// <param name="id">Album Id</param>
-        /// <returns></returns>
+        /// <returns>Status of operation</returns>
         public override IHttpActionResult Delete(int? id)
         {
             try
             {
                 if (!id.HasValue)
-                    return BadRequest();
+                    return Content(HttpStatusCode.BadRequest, new { message = "Invalid parameter.", status = HttpStatusCode.BadRequest });
 
                 Album album = _repository.SelectById(id.Value);
 
                 if (album == null)
                     return Content(HttpStatusCode.NotFound, new { message = "The response didn't return any data.", status = HttpStatusCode.NotFound });
-                    //return NotFound();
 
                 _repository.DeleteById(id.Value);
 
-                return Ok();
+                return Content(HttpStatusCode.OK, new { message = "The item was successfully removed.", status = HttpStatusCode.OK });
             }
             catch (Exception e)
             {
@@ -168,7 +177,6 @@ namespace MySongsApi.API.Controllers
 
             if (!albums.Any())
                 return Content(HttpStatusCode.NotFound, new { message = "The response didn't return any data.", status = HttpStatusCode.NotFound });
-                //return NotFound();
 
             return Ok(_autoMapper.Map<List<Album>, List<AlbumDTO>>(albums.ToList()));
         }

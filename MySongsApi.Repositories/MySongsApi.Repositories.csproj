@@ -51,13 +51,20 @@
     <Compile Include="Impl\BandsRepository.cs" />
     <Compile Include="Impl\GenericRepository.cs" />
     <Compile Include="Impl\SongsRepository.cs" />
+    <Compile Include="Interfaces\IAlbumRepository.cs" />
+    <Compile Include="Interfaces\IBandRepository.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\ISongRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MySongsApi.Domain\MySongsApi.Domain.csproj">
       <Project>{2B9E2F4C-F7F0-418F-82F3-72A4097644D1}</Project>
       <Name>MySongsApi.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MySongsApi.Infrastructure\MySongsApi.Infrastructure.csproj">
+      <Project>{E2572C88-C927-4693-9524-B1C71AF7E7BE}</Project>
+      <Name>MySongsApi.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

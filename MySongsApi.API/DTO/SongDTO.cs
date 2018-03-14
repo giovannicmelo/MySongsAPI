@@ -13,6 +13,7 @@ namespace MySongsApi.API.DTO
         [StringLength(maximumLength: 150, MinimumLength = 2, ErrorMessage = "'Name' must have between 2 and 150 characters")]
         public string Name { get; set; }
         public int Duration { get; set; }
+        public string Album { get; set; }
 
         [Required(ErrorMessage = "The field 'IdAlbum' is required")]
         public int IdAlbum { get; set; }

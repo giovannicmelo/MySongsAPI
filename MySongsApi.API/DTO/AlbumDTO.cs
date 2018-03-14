@@ -17,6 +17,7 @@ namespace MySongsApi.API.DTO
         public DateTime ReleasedDate { get; set; }
         [Required(ErrorMessage = "The field 'IdBand' is required")]
         public int IdBand { get; set; }
+        public string Band { get; set; }
 
         public List<SongDTO> Songs { get; set; }
     }
