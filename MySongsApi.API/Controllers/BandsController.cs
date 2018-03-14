@@ -26,9 +26,9 @@ namespace MySongsApi.API.Controllers
         /// <summary>
         /// Constructor
         /// </summary>
-        public BandsController() : base()
+        public BandsController(IBandRepository repository)
         {
-            _repository = _kernel.Get<IBandRepository>();
+            _repository = repository;
         }
 
         /// <summary>

@@ -25,9 +25,9 @@ namespace MySongsApi.API.Controllers
         /// <summary>
         /// Constructor
         /// </summary>
-        public SongsController() : base()
+        public SongsController(ISongRepository repository)
         {
-            _repository = _kernel.Get<ISongRepository>();
+            _repository = repository;
         }
 
         /// <summary>

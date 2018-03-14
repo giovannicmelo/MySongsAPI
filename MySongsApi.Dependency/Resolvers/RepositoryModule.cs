@@ -1,5 +1,4 @@
-﻿using MySongsApi.Infrastructure.Context;
-using MySongsApi.Repositories.Impl;
+﻿using MySongsApi.Repositories.Impl;
 using MySongsApi.Repositories.Interfaces;
 using Ninject.Modules;
 using System;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace MySongsApi.API.DependenciesResolver
+namespace MySongsApi.Dependency.Resolvers
 {
     public class RepositoryModule : NinjectModule
     {
